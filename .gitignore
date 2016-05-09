@@ -1,0 +1,20 @@
+# Temporary files
+!/tmp/.git-keep
+/tmp/*
+
+
+!/tmp/pids/.git-keep
+/tmp/pids/*
+/tmp/pids
+
+
+# Log files
+!/log/.git-keep
+/log/*
+
+
+## Ignore OS X cruft
+.DS_Store
+
+## Configuration files
+flapjack-benchmark.yml

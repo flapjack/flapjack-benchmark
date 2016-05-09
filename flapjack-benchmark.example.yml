@@ -1,0 +1,19 @@
+flapjack_1_6_0:
+    redis:
+        host: localhost
+        port: 6379
+        db: 0
+    jsonapi:
+        bind_address: 127.0.0.1
+        base_url: http://localhost
+        port: 3082
+flapjack_2_0_0:
+    redis:
+        host: localhost
+        port: 6379
+        db: 0
+    jsonapi:
+        bind_address: 0.0.0.0
+        port: 3082
+        base_url: http://localhost:3082
+        
