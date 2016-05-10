@@ -7,35 +7,24 @@ require 'minitest/autorun'
 require 'timing'
 require 'config'
 require 'event_queue'
-require 'flapjack_server'
+require 'test_server'
 
 class NaiveFloodTest < PerformanceTest
-  
   def setup
-    redis_config = CONFIG['redis']
+    @redis = event_queue_redis_connection
 
-    @redis = Redis.new(
-      host: redis_config['host'],
-      port: redis_config['port'],
-      db: redis_config['db']
-    )
-    
     @redis.flushdb
     sleep(5)
-    
-    # SMELL Move this into LocalServer
-   # unless defined? @@flapjack_loaded && @@flapjack_loaded
-      Flapjack::LocalServer.start
-      @@flapjack_loaded = true
- #   end
 
+    Flapjack::Benchmark::TestServer.start
+   
     wait_until_empty_queue(@redis)
   end
 
   def teardown
-    Flapjack::LocalServer.stop
+    Flapjack::Benchmark::TestServer.stop
   end
-  
+
   def test_ping_flood_100_per_sec
     ping_flood(event_rate: 100)
   end
@@ -86,9 +75,9 @@ class NaiveFloodTest < PerformanceTest
       queue_lengths.push(fetch_queue_length(@redis))
       push_event(redis: @redis, queue: 'events', event: build_event(state: :ok), repeat: event_rate)
     end
-    
+
     cooling_down_start = Time.now
-    
+
     puts "\n\tfinal queue length: #{queue_lengths.last}"
     puts "\tmean queue length: #{queue_lengths.mean}"
 
@@ -100,12 +89,12 @@ class NaiveFloodTest < PerformanceTest
       end
       next_time += 1
     end
-    
+
     puts "\tcooling down time: #{Time.now - cooling_down_start} seconds\n\n"
   end
-  
+
   def find_peak_usage(proportional_gain_factor: 0.5, integral_gain_factor: 0.2)
-    puts "Peak usage test"
+    puts 'Peak usage test'
     # Setup event gain
     event_gain = 10
 
@@ -122,14 +111,12 @@ class NaiveFloodTest < PerformanceTest
 
     (1..200).each do
       guarantee_cycle(next_time) do
-
         # Calculate integral gain from last cycle
         integral_gain = (gain_error_history.mean || 0) * integral_gain_factor
 
         # Get queue length data
         last_queue_length     = current_queue_length
         current_queue_length  = fetch_queue_length(@redis)
-        
 
         # Determine gain error
         gain_error = last_queue_length - current_queue_length
@@ -141,24 +128,22 @@ class NaiveFloodTest < PerformanceTest
         gain_error_history.push(gain_error)
         gain_error_history.shift if gain_error_history.count > max_gain_error_history
 
-        event_gain = event_gain + (proportional_gain + integral_gain).round
+        event_gain += (proportional_gain + integral_gain).round
         event_gain = 1 if event_gain == 0 # Don't let event rate flatline
 
         last_event_rate = current_event_rate
-        current_event_rate = current_event_rate + event_gain
+        current_event_rate += event_gain
         event_rate_history << current_event_rate
 
         # Push events at current rate
         push_event(redis: @redis, queue: 'events', event: build_event(state: :ok), repeat: current_event_rate)
-
       end
       cycle_count += 1
       next_time += 1
     end
-    
+
     puts "\tmax. event rate: #{event_rate_history.max}"
   end
-
 
   def find_equilibrium(initial_event_rate: 10, ramp_direction: :up)
     puts "Equilibrium test: initial push rate: #{initial_event_rate} events/sec; ramp: #{ramp_direction}..."
@@ -203,9 +188,8 @@ class NaiveFloodTest < PerformanceTest
         # puts "queue length: #{queue_length}; event_rate: #{event_rate}; ramp_rate: #{ramp_rate}"
 
         (1..event_rate).each do
-          event = build_event(state: :ok)           
+          event = build_event(state: :ok)
           push_event(redis: @redis, queue: 'events', event: event)
-          
         end
       end
 

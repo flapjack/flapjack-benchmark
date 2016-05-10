@@ -34,7 +34,7 @@ The project uses ThoughBot's [Appraisal](https://github.com/thoughtbot/appraisal
 `bundle install`
 `appraisal install`
 
-You may find that the [hiredis](https://github.com/redis/hiredis-rb) gem doesn't install fully. To ensure that native extensions are built you may need to install `hiredis` manually
+You may find that the [hiredis](https://github.com/redis/hiredis-rb) gem doesn't install fully. To ensure that native extensions are built you may need to install `hiredis` manually, _e.g._
 
 `bundle exec gem install hiredis -v 0.6.1`
 
@@ -84,7 +84,7 @@ Individual test files can executed as per MiniTest's convention, using the TEST 
 
 ## TODO
 
-* Refactor all the `case Flapjack::VERSION` code (use mixins).
+* Refactor all the `case Flapjack::VERSION` code (use mixins / aliases).
 * Create a better reporting mechanism than 'puts' (probably extend the MiniTest reporter model).
 * Log test output into a separate file.
 * Enable testing of remote Flapjack servers
@@ -97,5 +97,6 @@ Individual test files can executed as per MiniTest's convention, using the TEST 
 * Reintroduce sync test - testing performance while JSON API is being used to update the contacts, etc database.
 * General clean up of code.
 * Self-test code, to verify config builder, etc.
+* Remove integral gain from flood tests - doesn't really work.
 
 

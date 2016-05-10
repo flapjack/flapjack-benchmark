@@ -1,3 +1,3 @@
 require 'performance_test'
-require 'flapjack_server'
+require 'test_server'
 require 'minitest/autorun'
