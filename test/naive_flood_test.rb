@@ -21,33 +21,33 @@ class NaiveFloodTest < PerformanceTest
     Flapjack::Benchmark::TestServer.stop
   end
 
-  # def test_ping_flood_100_per_sec
-  #   ping_flood(event_rate: 100)
-  # end
-  #
-  # def test_ping_flood_120_per_sec
-  #   ping_flood(event_rate: 120)
-  # end
-  #
-  # def test_ping_flood_150_per_sec
-  #   ping_flood(event_rate: 150)
-  # end
-  #
-  # def test_ping_flood_200_per_sec
-  #   ping_flood(event_rate: 200)
-  # end
-  #
-  # def test_ping_flood_500_per_sec
-  #   ping_flood(event_rate: 500)
-  # end
-  #
-  # def test_ping_flood_1000_per_sec
-  #   ping_flood(event_rate: 1000)
-  # end
-  #
-  # def test_find_equilibrium
-  #   find_equilibrium(initial_event_rate: 0)
-  # end
+  def test_ping_flood_100_per_sec
+    ping_flood(event_rate: 100)
+  end
+
+  def test_ping_flood_120_per_sec
+    ping_flood(event_rate: 120)
+  end
+
+  def test_ping_flood_150_per_sec
+    ping_flood(event_rate: 150)
+  end
+
+  def test_ping_flood_200_per_sec
+    ping_flood(event_rate: 200)
+  end
+
+  def test_ping_flood_500_per_sec
+    ping_flood(event_rate: 500)
+  end
+
+  def test_ping_flood_1000_per_sec
+    ping_flood(event_rate: 1000)
+  end
+
+  def test_find_equilibrium
+    find_equilibrium(initial_event_rate: 0)
+  end
 
   def test_find_peak_usage
     # NOTE You may need to play around with gain factors to get a reasonable equilibrium value.
@@ -118,8 +118,8 @@ class NaiveFloodTest < PerformanceTest
     puts "\tmean event rate: #{event_rate_history.mean}"
   end
 
-  def find_equilibrium(initial_event_rate: 10, ramp_direction: :up)
-    puts "Equilibrium test: initial push rate: #{initial_event_rate} events/sec; ramp: #{ramp_direction}..."
+  def find_equilibrium(initial_event_rate: 10)
+    puts "Equilibrium test: initial push rate: #{initial_event_rate} events/sec"
     # Determine throughput equilibrium
     # Ramp-up to equilibrium
     event_rate = initial_event_rate
@@ -148,10 +148,9 @@ class NaiveFloodTest < PerformanceTest
         end
 
         if queue_length <= last_queue_length
-          ramp_rate -= 1 unless ramp_rate == 1 || ramp_direction == :up
           event_rate += ramp_rate
         else
-          ramp_rate -= 1 unless ramp_rate == 1 || ramp_direction == :down
+          ramp_rate -= 1 unless ramp_rate == 1
           event_rate -= ramp_rate
         end
 
