@@ -9,6 +9,24 @@ require 'config'
 require 'event_queue'
 require 'test_server'
 
+# Array with fixed length, rolling values if maximum reached
+class RollingArray < Array
+  attr_reader :max
+
+  def initialize(max)
+    @max = max
+  end
+
+  def push(obj)
+    self.<<(obj)
+  end
+
+  def <<(obj)
+    shift if length == @max
+    super
+  end
+end
+
 class NaiveFloodTest < PerformanceTest
   def setup
     @redis = event_queue_redis_connection
@@ -17,7 +35,7 @@ class NaiveFloodTest < PerformanceTest
     sleep(5)
 
     Flapjack::Benchmark::TestServer.start
-   
+
     wait_until_empty_queue(@redis)
   end
 
@@ -56,16 +74,11 @@ class NaiveFloodTest < PerformanceTest
   def test_find_peak_usage
     # NOTE You may need to play around with gain factors to get a reasonable equilibrium value.
     find_peak_usage(
-      proportional_gain_factor: 0.5,
-      integral_gain_factor: 0.2
+      gain_factor: 0.5
     )
   end
 
   private
-
-  def fetch_queue_length(redis)
-    redis.llen('events')
-  end
 
   def ping_flood(event_rate: 100)
     puts "Ping flood test: #{event_rate} events/sec..."
@@ -73,7 +86,8 @@ class NaiveFloodTest < PerformanceTest
     queue_lengths = []
     tick_cycle(1, 40) do |_cycle_number|
       queue_lengths.push(fetch_queue_length(@redis))
-      push_event(redis: @redis, queue: 'events', event: build_event(state: :ok), repeat: event_rate)
+      event = build_event(state: :ok)
+      push_event(redis: @redis, event: event, repeat: event_rate)
     end
 
     cooling_down_start = Time.now
@@ -93,7 +107,7 @@ class NaiveFloodTest < PerformanceTest
     puts "\tcooling down time: #{Time.now - cooling_down_start} seconds\n\n"
   end
 
-  def find_peak_usage(proportional_gain_factor: 0.5, integral_gain_factor: 0.2)
+  def find_peak_usage(gain_factor: 0.5)
     puts 'Peak usage test'
     # Setup event gain
     event_gain = 10
@@ -111,9 +125,6 @@ class NaiveFloodTest < PerformanceTest
 
     (1..200).each do
       guarantee_cycle(next_time) do
-        # Calculate integral gain from last cycle
-        integral_gain = (gain_error_history.mean || 0) * integral_gain_factor
-
         # Get queue length data
         last_queue_length     = current_queue_length
         current_queue_length  = fetch_queue_length(@redis)
@@ -122,21 +133,21 @@ class NaiveFloodTest < PerformanceTest
         gain_error = last_queue_length - current_queue_length
 
         # Calculate proportional gain from current cycle
-        proportional_gain = (gain_error_history.last || 0) * proportional_gain_factor
+        proportional_gain = (gain_error_history.last || 0) * gain_factor
 
-        # Store event gain error history
+        # # Store event gain error history
         gain_error_history.push(gain_error)
         gain_error_history.shift if gain_error_history.count > max_gain_error_history
 
-        event_gain += (proportional_gain + integral_gain).round
+        event_gain += proportional_gain.round
         event_gain = 1 if event_gain == 0 # Don't let event rate flatline
 
-        last_event_rate = current_event_rate
         current_event_rate += event_gain
         event_rate_history << current_event_rate
 
         # Push events at current rate
-        push_event(redis: @redis, queue: 'events', event: build_event(state: :ok), repeat: current_event_rate)
+        event = build_event(state: :ok)
+        push_event(redis: @redis, event: event, repeat: current_event_rate)
       end
       cycle_count += 1
       next_time += 1
@@ -152,8 +163,8 @@ class NaiveFloodTest < PerformanceTest
     event_rate = initial_event_rate
     last_queue_length = 0
     ramp_rate = 10
-    throughput_samples = []
-    max_throughput_samples = 50
+    throughput_samples = RollingArray.new(50)
+    max_variance = 4.0 # NOTE Arbitrary value - good enough
 
     event = build_event
     next_time = Time.now + 1
@@ -165,10 +176,9 @@ class NaiveFloodTest < PerformanceTest
         queue_length = fetch_queue_length(@redis)
 
         throughput_samples.push(event_rate)
-        throughput_samples.shift if throughput_samples.count > max_throughput_samples
 
-        if throughput_samples.count == max_throughput_samples
-          if throughput_samples.variance < 4.0 # NOTE Arbitrary value - good enough
+        if throughput_samples.length == throughput_samples.max
+          if throughput_samples.variance < max_variance
             puts "\tMean ping throughput: #{throughput_samples.mean} events/sec"
             equilibrium_reached = true
             break
@@ -185,11 +195,9 @@ class NaiveFloodTest < PerformanceTest
 
         last_queue_length = queue_length
 
-        # puts "queue length: #{queue_length}; event_rate: #{event_rate}; ramp_rate: #{ramp_rate}"
-
         (1..event_rate).each do
           event = build_event(state: :ok)
-          push_event(redis: @redis, queue: 'events', event: event)
+          push_event(redis: @redis, event: event)
         end
       end
 

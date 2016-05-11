@@ -16,14 +16,13 @@ require 'pry'
 require 'pry-byebug'
 
 class OutageTest < PerformanceTest
-  
   def setup
     @redis = event_queue_redis_connection
 
     puts 'Flushing DB..'
     @redis.flushdb
     sleep(5)
-    
+
     setup_flapjack_diner
 
     Flapjack::Benchmark::TestServer.start
@@ -50,7 +49,7 @@ class OutageTest < PerformanceTest
   end
 
   private
-  
+
   def setup_flapjack_diner
     base_uri = Flapjack::Benchmark::Config.jsonapi_config['base_url']
     logger_path = File.join(Flapjack::Benchmark::Config.log_path, 'diner.log')
@@ -59,7 +58,7 @@ class OutageTest < PerformanceTest
     Flapjack::Diner.logger = Logger.new(logger_path, :error)
     Flapjack::Diner.open_timeout(30)
     Flapjack::Diner.read_timeout(600)
-  end  
+  end
 
   # TODO: Complete this test, removing reliance on threads by using a rolling
   # window, i.e. roll through groups of entities at the declared event rate,
@@ -228,7 +227,7 @@ class OutageTest < PerformanceTest
 
   def setup_contacts
     contacts = build_contacts(10)
-    
+
     success = create_contacts(contacts)
 
     raise 'Error importing contacts into Flapjack' unless success

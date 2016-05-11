@@ -4,14 +4,12 @@ require 'flapjack/version'
 module Flapjack
   module Benchmark
     class Config
-      
       APPLICATION_ROOT = File.expand_path(File.join(File.dirname(File.expand_path(__FILE__)), '../')) unless defined? APPLICATION_ROOT
 
       FLAPJACK_ENV = 'flapjack_' + Flapjack::VERSION.tr('.', '_') unless defined? FLAPJACK_ENV
       CONFIG = YAML.load_file(File.join(APPLICATION_ROOT, 'flapjack-benchmark.yml'))[FLAPJACK_ENV] unless defined? CONFIG
-  
-      class << self
 
+      class << self
         def server_config_path
           case Flapjack::VERSION
           when '1.6.0' then build_flapjack_1_6_config
@@ -19,7 +17,7 @@ module Flapjack
           else
             raise "Unsupported Flapjack::VERSION #{Flapjack::VERSION}"
           end
-        end  
+        end
 
         def tmp_path
           File.join(APPLICATION_ROOT, 'tmp')
@@ -27,27 +25,29 @@ module Flapjack
 
         def log_path
           File.join(APPLICATION_ROOT, 'log')
-        end  
-          
+        end
+
         def pids_path
           File.join(tmp_path, 'pids')
         end
-        
+
         def redis_config
           CONFIG['redis']
         end
-        
+
         def jsonapi_config
           CONFIG['jsonapi']
         end
 
         private
 
+        # SMELL Need to separate the construction of the config file from
+        # the saving to disk
         def build_flapjack_2_0_config
           require 'toml'
 
           # SEMLL Dupey dupe dupe
-          log_file = File.join(APPLICATION_ROOT, 'log', 'flapjack_2_0.log')
+          log_file = File.join(log_path, 'flapjack_2_0.log')
           redis_config = CONFIG['redis']
           jsonapi_config = CONFIG['jsonapi']
 
@@ -112,7 +112,7 @@ module Flapjack
             }
           }
 
-          config_file = File.join(APPLICATION_ROOT, 'tmp', 'flapjack_2_0_config.toml')
+          config_file = File.join(tmp_path, 'flapjack_2_0_config.toml')
 
           File.open(config_file, 'w') do |file|
             file.write TOML.dump(config)
@@ -124,17 +124,12 @@ module Flapjack
         def build_flapjack_1_6_config
           require 'yaml'
 
-          pid_dir = File.join(APPLICATION_ROOT, 'tmp', 'pids') # SMELL Dupe from flapjack_server.rb
-          log_dir = File.join(APPLICATION_ROOT, 'log')
-          log_file = File.join(log_dir, 'flapjack_1_6.log')
-
-          redis_config = CONFIG['redis']
-          jsonapi_config = CONFIG['jsonapi']
+          log_file = File.join(log_path, 'flapjack_1_6.log')
 
           config = {
             'production' => {
-              'pid_dir' => pid_dir,
-              'log_dir' => log_dir,
+              'pid_dir' => pids_path,
+              'log_dir' => log_path,
               'daemonize' => 'no',
               'redis' => {
                 'host' => redis_config['host'],
@@ -169,7 +164,7 @@ module Flapjack
             }
           }
 
-          config_file = File.join(APPLICATION_ROOT, 'tmp', 'flapjack_1_6_config.yaml')
+          config_file = File.join(tmp_path, 'flapjack_1_6_config.yaml')
 
           File.open(config_file, 'w') do |file|
             file.write config.to_yaml

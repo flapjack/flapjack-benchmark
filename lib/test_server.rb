@@ -12,13 +12,6 @@ module Flapjack
         def start
           kill_old_server
           start_new_server
-          # SMELL This is a lame way to wait for server to start, but
-          # unfortunately there's no simple way to determine if the server is
-          # running and ready. Calls to `server status` routinely returns
-          # "Starting", even when the system is ready to accept incoming
-          # requests. One way would be to follow the log until
-          # "flapjack-processor :: Booting main loop." appears.
-          sleep(10)
         end
 
         def stop
@@ -55,7 +48,8 @@ module Flapjack
         end
 
         def pid_filename
-          File.join(Flapjack::Benchmark::Config.pids_path, 'flapjack_server.pid')
+          pids_path = Flapjack::Benchmark::Config.pids_path
+          File.join(pids_path, 'flapjack_server.pid')
         end
 
         def fetch_pid
