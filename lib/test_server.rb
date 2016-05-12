@@ -1,4 +1,5 @@
 require 'config'
+require 'server_config'
 
 module Flapjack
   module Benchmark
@@ -33,9 +34,9 @@ module Flapjack
         end
 
         def start_new_server
-          tmp_path = Flapjack::Benchmark::Config.tmp_path
-          server_std_out = File.join(tmp_path, 'std_out')
-          server_std_err = File.join(tmp_path, 'std_err')
+          tmp_dir = Flapjack::Benchmark::Config.tmp_dir
+          server_std_out = File.join(tmp_dir, 'std_out')
+          server_std_err = File.join(tmp_dir, 'std_err')
 
           new_pid = Process.spawn(
             server_command,
@@ -48,8 +49,8 @@ module Flapjack
         end
 
         def pid_filename
-          pids_path = Flapjack::Benchmark::Config.pids_path
-          File.join(pids_path, 'flapjack_server.pid')
+          pid_dir = Flapjack::Benchmark::Config.pid_dir
+          File.join(pid_dir, 'flapjack_server.pid')
         end
 
         def fetch_pid
@@ -62,13 +63,13 @@ module Flapjack
         end
 
         def server_command
-          config_path = Flapjack::Benchmark::Config.server_config_path
+          config_path = Flapjack::Benchmark::ServerConfig.create_config_file!
           server_config = "--config=#{config_path} server start --no-daemonize"
           "bundle exec flapjack #{server_config}"
         end
 
         def store_pid(pid)
-          FileUtils.mkdir_p(Flapjack::Benchmark::Config.pids_path)
+          FileUtils.mkdir_p(Flapjack::Benchmark::Config.pid_dir)
           File.write(pid_filename, pid.to_s)
         end
       end

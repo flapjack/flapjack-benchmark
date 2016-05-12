@@ -52,7 +52,7 @@ class OutageTest < PerformanceTest
 
   def setup_flapjack_diner
     base_uri = Flapjack::Benchmark::Config.jsonapi_config['base_url']
-    logger_path = File.join(Flapjack::Benchmark::Config.log_path, 'diner.log')
+    logger_path = File.join(Flapjack::Benchmark::Config.log_dir, 'diner.log')
 
     Flapjack::Diner.base_uri(base_uri)
     Flapjack::Diner.logger = Logger.new(logger_path, :error)

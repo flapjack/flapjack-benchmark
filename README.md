@@ -4,15 +4,24 @@ Benchmarking tests for Flapjack
 
 ## Overview
 
-The aim of flapjack-benchmark is to provide simple benchmarking tools to test against different versions or configurations of Flapjack.
+The aim of *flapjack-benchmark* is to provide simple benchmarking tools to test against different versions or configurations of Flapjack.
 
 The project uses MiniTest as a mechanism for running tests. This is mostly out of convenience, and doesn't use any assertions or checking features supplied by MiniTest. Neither does it make good use of MiniTest's reporting features, though this may be resolved in the future (see TODO list below).
 
 ## Configuring environment
 
+### Prerequisites
+
+The following are required to be installed prior to running the project:
+
+* A Ruby version compatible with both Flapjack 1.6 and 2.0
+* Redis version 2.6.12 or greater
+
+The project's `.ruby-version` set Ruby at 2.1.4. Later versions may break Flapjack 1.6, so change this with care.
+
 ### flapjack-benchmark.yml
 
-Configuration for flapjack-benchmark resides in the `flapjack-benchmark.yml` file located in the application root. An example file is included in the project (`flapjack-benchmark.example.yml`).
+Configuration for *flapjack-benchmark* resides in the `flapjack-benchmark.yml` file located in the application root. An example file is included in the project (`flapjack-benchmark.example.yml`).
 
 A typical configuration (for a local server) looks like this:
 

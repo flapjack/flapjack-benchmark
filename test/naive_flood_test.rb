@@ -115,7 +115,7 @@ class NaiveFloodTest < PerformanceTest
     end
 
     puts "\tmax. event rate: #{event_rate_history.max}"
-    puts "\tmean event rate: #{event_rate_history.mean}"
+    puts "\tmean event rate: #{event_rate_history.mean}\n"
   end
 
   def find_equilibrium(initial_event_rate: 10)

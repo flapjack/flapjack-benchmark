@@ -6,8 +6,8 @@ module Flapjack
     class Config
       APPLICATION_ROOT = File.expand_path(File.join(File.dirname(File.expand_path(__FILE__)), '../')) unless defined? APPLICATION_ROOT
 
-      FLAPJACK_ENV = 'flapjack_' + Flapjack::VERSION.tr('.', '_') unless defined? FLAPJACK_ENV
-      CONFIG = YAML.load_file(File.join(APPLICATION_ROOT, 'flapjack-benchmark.yml'))[FLAPJACK_ENV] unless defined? CONFIG
+      FLAPJACK_VERSION = 'flapjack_' + Flapjack::VERSION.tr('.', '_') unless defined? FLAPJACK_VERSION
+      CONFIG = YAML.load_file(File.join(APPLICATION_ROOT, 'flapjack-benchmark.yml'))[FLAPJACK_VERSION] unless defined? CONFIG
 
       class << self
         def server_config_path
@@ -19,16 +19,16 @@ module Flapjack
           end
         end
 
-        def tmp_path
+        def tmp_dir
           File.join(APPLICATION_ROOT, 'tmp')
         end
 
-        def log_path
+        def log_dir
           File.join(APPLICATION_ROOT, 'log')
         end
 
-        def pids_path
-          File.join(tmp_path, 'pids')
+        def pid_dir
+          File.join(tmp_dir, 'pids')
         end
 
         def redis_config
@@ -47,7 +47,7 @@ module Flapjack
           require 'toml'
 
           # SEMLL Dupey dupe dupe
-          log_file = File.join(log_path, 'flapjack_2_0.log')
+          log_file = File.join(log_dir, 'flapjack_2_0.log')
           redis_config = CONFIG['redis']
           jsonapi_config = CONFIG['jsonapi']
 
@@ -112,7 +112,7 @@ module Flapjack
             }
           }
 
-          config_file = File.join(tmp_path, 'flapjack_2_0_config.toml')
+          config_file = File.join(tmp_dir, 'flapjack_2_0_config.toml')
 
           File.open(config_file, 'w') do |file|
             file.write TOML.dump(config)
@@ -124,12 +124,12 @@ module Flapjack
         def build_flapjack_1_6_config
           require 'yaml'
 
-          log_file = File.join(log_path, 'flapjack_1_6.log')
+          log_file = File.join(log_dir, 'flapjack_1_6.log')
 
           config = {
             'production' => {
-              'pid_dir' => pids_path,
-              'log_dir' => log_path,
+              'pid_dir' => pid_dir,
+              'log_dir' => log_dir,
               'daemonize' => 'no',
               'redis' => {
                 'host' => redis_config['host'],
@@ -164,7 +164,9 @@ module Flapjack
             }
           }
 
-          config_file = File.join(tmp_path, 'flapjack_1_6_config.yaml')
+          FileUtils.mkdir_p(Flapjack::Benchmark::Config.tmp_dir)
+
+          config_file = File.join(tmp_dir, 'flapjack_1_6_config.yaml')
 
           File.open(config_file, 'w') do |file|
             file.write config.to_yaml
