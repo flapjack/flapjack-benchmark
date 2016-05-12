@@ -25,34 +25,34 @@ class NaiveFloodTest < PerformanceTest
     ping_flood(event_rate: 100)
   end
 
-  # def test_ping_flood_120_per_sec
-  #   ping_flood(event_rate: 120)
-  # end
-  #
-  # def test_ping_flood_150_per_sec
-  #   ping_flood(event_rate: 150)
-  # end
-  #
-  # def test_ping_flood_200_per_sec
-  #   ping_flood(event_rate: 200)
-  # end
-  #
-  # def test_ping_flood_500_per_sec
-  #   ping_flood(event_rate: 500)
-  # end
-  #
-  # def test_ping_flood_1000_per_sec
-  #   ping_flood(event_rate: 1000)
-  # end
-  #
-  # def test_find_equilibrium
-  #   find_equilibrium(initial_event_rate: 0)
-  # end
-  #
-  # def test_find_peak_usage
-  #   # NOTE You may need to play around with gain factors to get a reasonable equilibrium value.
-  #   find_peak_usage(initial_gain: 10, gain_factor: 0.5)
-  # end
+  def test_ping_flood_120_per_sec
+    ping_flood(event_rate: 120)
+  end
+
+  def test_ping_flood_150_per_sec
+    ping_flood(event_rate: 150)
+  end
+
+  def test_ping_flood_200_per_sec
+    ping_flood(event_rate: 200)
+  end
+
+  def test_ping_flood_500_per_sec
+    ping_flood(event_rate: 500)
+  end
+
+  def test_ping_flood_1000_per_sec
+    ping_flood(event_rate: 1000)
+  end
+
+  def test_find_equilibrium
+    find_equilibrium(initial_event_rate: 0)
+  end
+
+  def test_find_peak_usage
+    # NOTE You may need to play around with gain factors to get a reasonable equilibrium value.
+    find_peak_usage(initial_gain: 10, gain_factor: 0.5)
+  end
 
   private
 
