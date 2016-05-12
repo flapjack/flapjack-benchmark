@@ -2,10 +2,10 @@ require 'config'
 
 module Flapjack
   module Benchmark
-    class ServerConfig
+    class ServerConfig < Config
       class << self
         def create_config_file!
-          FileUtils.mkdir_p(config_dir)
+          FileUtils.mkdir_p(tmp_dir)
 
           build_method = "build_#{Flapjack::VERSION.tr('.', '_')}_config".to_sym
 
@@ -25,31 +25,10 @@ module Flapjack
 
         def config_file_path
           filename = [config_file_basename, config_file_extension].join('.')
-          File.join(config_dir, filename)
+          File.join(tmp_dir, filename)
         end
 
         private
-
-        # SMELL Delegate these??
-        def config_dir
-          Flapjack::Benchmark::Config.tmp_dir
-        end
-
-        def log_dir
-          Flapjack::Benchmark::Config.log_dir
-        end
-
-        def pid_dir
-          Flapjack::Benchmark::Config.pid_dir
-        end
-
-        def redis_config
-          Flapjack::Benchmark::Config.redis_config
-        end
-
-        def jsonapi_config
-          Flapjack::Benchmark::Config.jsonapi_config
-        end
 
         def config_file_basename
           "flapjack_#{Flapjack::VERSION.tr('.', '_')}_config"
@@ -57,6 +36,14 @@ module Flapjack
 
         def config_file_extension
           Flapjack::VERSION >= '2.0.0' ? 'toml' : 'yaml'
+        end
+
+        def build_redis_config
+          {
+            'host' => redis_config['host'],
+            'port' => redis_config['port'],
+            'db' => redis_config['db']
+          }
         end
 
         def build_1_6_0_config
@@ -69,11 +56,7 @@ module Flapjack
               'pid_dir' => pid_dir,
               'log_dir' => log_dir,
               'daemonize' => 'no',
-              'redis' => {
-                'host' => redis_config['host'],
-                'port' => redis_config['port'],
-                'db' => redis_config['db']
-              },
+              'redis' => build_redis_config,
               'processor' => {
                 'enabled' => 'yes',
                 'queue' => 'events',
@@ -116,11 +99,7 @@ module Flapjack
               'level' => 'INFO',
               'syslog_errors' => false
             },
-            'redis' => {
-              'host' => redis_config['host'],
-              'port' => redis_config['port'],
-              'db' => redis_config['db']
-            },
+            'redis' => build_redis_config,
             'processor' => {
               'enabled' => true,
               'queue' => 'events',
