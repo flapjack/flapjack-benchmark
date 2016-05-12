@@ -1,16 +1,12 @@
 # Temporary files
+/tmp/**
 !/tmp/.git-keep
-/tmp/*
-
-
-!/tmp/pids/.git-keep
-/tmp/pids/*
-/tmp/pids
 
 
 # Log files
+/log/**
 !/log/.git-keep
-/log/*
+
 
 
 ## Ignore OS X cruft
