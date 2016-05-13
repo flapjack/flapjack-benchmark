@@ -1,4 +1,4 @@
-flapjack_1_6_0:
+flapjack_1_6:
     redis:
         host: localhost
         port: 6379
@@ -7,7 +7,7 @@ flapjack_1_6_0:
         bind_address: 0.0.0.0
         base_url: http://localhost:3082
         port: 3082
-flapjack_2_0_0:
+flapjack_2_0:
     redis:
         host: localhost
         port: 6379

@@ -7,12 +7,12 @@ def wait_until_empty_queue(redis)
 end
 
 def event_queue_redis_connection
-  redis_config = Flapjack::Benchmark::Config.redis_config
-
+  redis_settings = Flapjack::Benchmark::Config.settings['redis']
+  
   Redis.new(
-    host: redis_config['host'],
-    port: redis_config['port'],
-    db: redis_config['db']
+    host: redis_settings['host'],
+    port: redis_settings['port'],
+    db:   redis_settings['db']
   )
 end
 

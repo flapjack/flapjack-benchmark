@@ -17,6 +17,7 @@ module Flapjack
               file.write config
             end
 
+            sleep(3)
             file_path
           else
             raise "Unsupported Flapjack version #{Flapjack::VERSION}"
@@ -31,6 +32,7 @@ module Flapjack
         private
 
         def config_file_basename
+          # SMELL See above for same pattern - refactor
           "flapjack_#{Flapjack::VERSION.tr('.', '_')}_config"
         end
 
@@ -39,10 +41,11 @@ module Flapjack
         end
 
         def build_redis_config
+          redis_config = Flapjack::Benchmark::Config.settings['redis']
           {
             'host' => redis_config['host'],
             'port' => redis_config['port'],
-            'db' => redis_config['db']
+            'db' =>   redis_config['db']
           }
         end
 
@@ -61,7 +64,7 @@ module Flapjack
                 'enabled' => 'yes',
                 'queue' => 'events',
                 'notifier_queue' => 'notifications',
-                'archive_events' => 'false',
+                'archive_events' => false,
                 'events_archive_maxage' => 3600,
                 'new_check_scheduled_maintenance_duration' => '0 seconds',
                 'logger' => {
@@ -72,10 +75,10 @@ module Flapjack
               'gateways' => {
                 'jsonapi' => {
                   'enabled' => 'yes',
-                  'port' => jsonapi_config['port'],
+                  'port' => settings['jsonapi']['port'],
                   'timeout' => 300,
                   'access_log' => log_file,
-                  'base_url' => jsonapi_config['base_url'],
+                  'base_url' => settings['jsonapi']['base_url'],
                   'logger' => {
                     'level' => 'ERROR',
                     'syslog_errors' => 'no'
@@ -84,6 +87,11 @@ module Flapjack
               }
             }
           }
+          
+          puts "++++"
+          puts settings['jsonapi']
+          puts "++++"
+          
           config.to_yaml
         end
 
@@ -96,7 +104,7 @@ module Flapjack
           config = {
             'logger' => {
               'file' => log_file,
-              'level' => 'INFO',
+              'level' => 'DEBUG',
               'syslog_errors' => false
             },
             'redis' => build_redis_config,
@@ -136,11 +144,11 @@ module Flapjack
             'gateways' => {
               'jsonapi' => {
                 'enabled' => true,
-                'bind_address' => jsonapi_config['bind_address'],
-                'port' => jsonapi_config['port'],
+                'bind_address' => settings['jsonapi']['bind_address'],
+                'port' => settings['jsonapi']['port'],
                 'timeout' => 300,
                 'access_log' => log_file,
-                'base_url' => jsonapi_config['base_url'],
+                'base_url' => settings['jsonapi']['base_url'],
                 'logger' => {
                   'file' => log_file,
                   'level' => 'ERROR',

@@ -12,9 +12,6 @@ require 'test_server'
 require 'performance_test'
 require 'minitest/autorun'
 
-require 'pry'
-require 'pry-byebug'
-
 class OutageTest < PerformanceTest
   def setup
     @redis = event_queue_redis_connection
@@ -26,6 +23,7 @@ class OutageTest < PerformanceTest
     setup_flapjack_diner
 
     Flapjack::Benchmark::TestServer.start
+    sleep(10) # Allow server enough time to fire up JSONAPI interface
   end
 
   def teardown
@@ -51,7 +49,7 @@ class OutageTest < PerformanceTest
   private
 
   def setup_flapjack_diner
-    base_uri = Flapjack::Benchmark::Config.jsonapi_config['base_url']
+    base_uri = Flapjack::Benchmark::Config.settings['jsonapi']['base_url']
     logger_path = File.join(Flapjack::Benchmark::Config.log_dir, 'diner.log')
 
     Flapjack::Diner.base_uri(base_uri)
