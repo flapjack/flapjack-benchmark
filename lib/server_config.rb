@@ -87,11 +87,7 @@ module Flapjack
               }
             }
           }
-          
-          puts "++++"
-          puts settings['jsonapi']
-          puts "++++"
-          
+
           config.to_yaml
         end
 
@@ -104,7 +100,7 @@ module Flapjack
           config = {
             'logger' => {
               'file' => log_file,
-              'level' => 'DEBUG',
+              'level' => 'ERROR',
               'syslog_errors' => false
             },
             'redis' => build_redis_config,
@@ -118,7 +114,7 @@ module Flapjack
               'new_check_scheduled_maintenance_ignore_regex' => 'bypass_ncsm$', # NOTE Not used
               'logger' => {
                 'file' => log_file,
-                'level' => 'INFO',
+                'level' => 'ERROR',
                 'syslog_errors' => false
               }
             },

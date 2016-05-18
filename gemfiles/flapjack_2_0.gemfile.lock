@@ -72,6 +72,7 @@ GEM
     numerizer (0.1.1)
     parser (2.3.1.0)
       ast (~> 2.2)
+    perftools.rb (2.0.4)
     powerpack (0.1.1)
     puma (3.4.0)
     puma (3.4.0-java)
@@ -122,6 +123,7 @@ DEPENDENCIES
   minitest (~> 5.8.4)
   net-ssh
   net-ssh-shell
+  perftools.rb
   rake
   redis (~> 3.2)
   rubocop

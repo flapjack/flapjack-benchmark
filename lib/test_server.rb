@@ -34,11 +34,14 @@ module Flapjack
         end
 
         def start_new_server
-          tmp_dir = Flapjack::Benchmark::Config.tmp_dir
-          server_std_out = File.join(tmp_dir, 'std_out')
-          server_std_err = File.join(tmp_dir, 'std_err')
+          tmp_dir = Flapjack::Benchmark::Config.log_dir
+          appraisal_env = Flapjack::Benchmark::Config.appraisal_environment
+
+          server_std_out = File.join(tmp_dir, "std_out_#{appraisal_env}")
+          server_std_err = File.join(tmp_dir, "std_err_#{appraisal_env}")
 
           new_pid = Process.spawn(
+            server_env_vars,
             server_command,
             out: server_std_out,
             err: server_std_err
@@ -62,9 +65,27 @@ module Flapjack
           pid_str.to_i
         end
 
+        def server_env_vars
+          return {} unless ENV['PROFILE']
+
+          profile_path = File.join(
+            Flapjack::Benchmark::Config.tmp_dir,
+            ENV['PROFILE']
+          )
+
+          perftools_bundle = `gem which perftools | tail -1`
+
+          {
+            'CPUPROFILE' => profile_path,
+            'RUBYOPT' => "-r #{perftools_bundle}"
+          }
+        end
+
         def server_command
+          #    appraisal_env = Flapjack::Benchmark::Config.appraisal_environment
           config_path = Flapjack::Benchmark::ServerConfig.create_config_file!
           server_config = "--config=#{config_path} server start --no-daemonize"
+
           "bundle exec flapjack #{server_config}"
         end
 

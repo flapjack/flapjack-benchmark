@@ -1,8 +1,8 @@
-# appraise "flapjack_1_6" do
-#   gem "redis", "~> 3.0.6"
-#   gem "flapjack", "1.6.0"
-#   gem "flapjack-diner", "1.2.0"
-# end
+appraise "flapjack_1_6" do
+  gem "redis", "~> 3.0.6"
+  gem "flapjack", "1.6.0"
+  gem "flapjack-diner", "1.2.0"
+end
 
 appraise "flapjack_2_0" do
   gem "hiredis", "~> 0.6.1"

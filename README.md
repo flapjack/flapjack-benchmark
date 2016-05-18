@@ -1,6 +1,6 @@
 # flapjack-benchmark
 
-Benchmarking tests for Flapjack 
+Benchmarking tests for Flapjack versions 1.6 and 2.0
 
 ## Overview
 
@@ -17,7 +17,7 @@ The following are required to be installed prior to running the project:
 * A Ruby version compatible with both Flapjack 1.6 and 2.0
 * Redis version 2.6.12 or greater
 
-The project's `.ruby-version` set Ruby at 2.1.4. Later versions may break Flapjack 1.6, so change this with care.
+The project's `.ruby-version` sets Ruby at 2.1.4. Later versions may break Flapjack 1.6, so change this with care.
 
 ### flapjack-benchmark.yml
 
@@ -90,6 +90,47 @@ where _[APPRAISAL VERSION]_ is the Flapjack version under test. For instance, to
 Individual test files can executed as per MiniTest's convention, using the TEST variable, _e.g._
  
 `bundle exec appraisal flapjack_1_6 rake test TEST=test/naive_flood_test.rb`
+
+## Profiling Flapjack
+
+The benchmark uses (perftools.rb)[https://github.com/tmm1/perftools.rb] for profiling. Under Ruby 2.x this tool segfaults quite often (known issue) and is not recommended for general use.
+
+However, if you do want to profile any test run, use the `PROFILE=[output file]` command line variable to generate a profile file in the project's `tmp` directory.
+
+```
+bundle exec appraisal flapjack_1_6 rake test PROFILE=my_test TEST=test/naive_flood_test.rb
+```
+
+### Limitations / Things to Watch Out For
+
+Apart from issues with segfaulting, bear in mind that the profile generated will be for the _last_ test executed. If you want to profile a particular test, comment out all the other tests first. 
+
+If `perftools.rb` does segfault it can affect how tests execute. Flapjack is run in a separate process from the benchmark app, so if the Flapjack server dies the tests will continue running, filling up th
+
+### Reporting
+
+When it does work, `perftools.rb` is capable of producing decent reports on the internal workings of Flapjack. 
+
+To generate a text report, execute the following:
+
+```
+pprof.rb --text tmp/[output file]
+```
+
+substituting `[output file]` for the value passed in via the `PROFILE` command line argument.
+
+If you prefer to see a visual chart of the call stack, first install `grapviz`, e.g. 
+
+```
+brew install graphviz
+```
+and then 
+
+```
+pprof.rb --gif tmp/[output file] > tmp/[output file].gif
+```
+
+See the [perftools reporting options](https://github.com/tmm1/perftools.rb#reporting) for more details.
 
 ## TODO
 
