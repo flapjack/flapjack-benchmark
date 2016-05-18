@@ -8,11 +8,12 @@ end
 
 def event_queue_redis_connection
   redis_settings = Flapjack::Benchmark::Config.settings['redis']
-  
+
   Redis.new(
     host: redis_settings['host'],
     port: redis_settings['port'],
-    db:   redis_settings['db']
+    db:   redis_settings['db'],
+    driver: :hiredis
   )
 end
 
