@@ -14,6 +14,7 @@ require 'minitest/autorun'
 
 class OutageTest < PerformanceTest
   def setup
+    puts "GOT HERE!!"
     @redis = event_queue_redis_connection
 
     puts 'Flushing DB..'
@@ -22,12 +23,12 @@ class OutageTest < PerformanceTest
 
     setup_flapjack_diner
 
-    Flapjack::Benchmark::TestServer.start
+#    Flapjack::Benchmark::TestServer.start
     sleep(10) # Allow server enough time to fire up JSONAPI interface
   end
 
   def teardown
-    Flapjack::Benchmark::TestServer.stop
+#    Flapjack::Benchmark::TestServer.stop
   end
 
   def test_outage_flood_100_per_sec

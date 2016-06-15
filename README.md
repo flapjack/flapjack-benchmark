@@ -67,7 +67,7 @@ The equilibrium test attempt to find a benchmark throughput where events are bei
 
 The peak usage test started out as an attempt to develop a more sophisticated equilibrium test, treating events left in the queue as "errors" and modifying the ramp up / down rate (aka gain) accordingly. In practise this doesn't work, as the short periods where the queue gets filled don't give a reasonable error rate, and trying to use an integral value of recent errors doesn't produce a meaningful gain value.
 
-What the test does provide though is an idea of where the system peaks, and can be used to check against the output of the equilibrium (they are usually of similar values). 
+What the test does provide though is an idea of where the system peaks, and can be used to check against the output of the equilibrium (they are usually of similar values).
 
 In the long term this test should probably be either discarded or rewritten.
 
@@ -88,7 +88,7 @@ where _[APPRAISAL VERSION]_ is the Flapjack version under test. For instance, to
 `bundle exec appraisal flapjack_1_6 rake test`
 
 Individual test files can executed as per MiniTest's convention, using the TEST variable, _e.g._
- 
+
 `bundle exec appraisal flapjack_1_6 rake test TEST=test/naive_flood_test.rb`
 
 ## Profiling Flapjack
@@ -103,13 +103,13 @@ bundle exec appraisal flapjack_1_6 rake test PROFILE=my_test TEST=test/naive_flo
 
 ### Limitations / Things to Watch Out For
 
-Apart from issues with segfaulting, bear in mind that the profile generated will be for the _last_ test executed. If you want to profile a particular test, comment out all the other tests first. 
+Apart from issues with segfaulting, bear in mind that the profile generated will be for the _last_ test executed. If you want to profile a particular test, comment out all the other tests first.
 
 If `perftools.rb` does segfault it can affect how tests execute. Flapjack is run in a separate process from the benchmark app, so if the Flapjack server dies the tests will continue running, filling up th
 
 ### Reporting
 
-When it does work, `perftools.rb` is capable of producing decent reports on the internal workings of Flapjack. 
+When it does work, `perftools.rb` is capable of producing decent reports on the internal workings of Flapjack.
 
 To generate a text report, execute the following:
 
@@ -119,12 +119,12 @@ pprof.rb --text tmp/[output file]
 
 substituting `[output file]` for the value passed in via the `PROFILE` command line argument.
 
-If you prefer to see a visual chart of the call stack, first install `grapviz`, e.g. 
+If you prefer to see a visual chart of the call stack, first install `grapviz`, e.g.
 
 ```
 brew install graphviz
 ```
-and then 
+and then
 
 ```
 pprof.rb --gif tmp/[output file] > tmp/[output file].gif
@@ -148,5 +148,3 @@ See the [perftools reporting options](https://github.com/tmm1/perftools.rb#repor
 * General clean up of code.
 * Self-test code, to verify config builder, etc.
 * Remove integral gain from flood tests - doesn't really work.
-
-

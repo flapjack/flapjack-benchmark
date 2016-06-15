@@ -6,6 +6,7 @@ gem 'net-ssh-shell'
 gem 'descriptive_statistics', '~> 2.4.0'
 gem 'toml-rb'
 gem 'minitest', '~> 5.8.4'
-gem 'perftools.rb'
+#gem 'perftools.rb'
+gem 'stackprof'
 gem 'appraisal'
 gem 'rubocop', require: false
