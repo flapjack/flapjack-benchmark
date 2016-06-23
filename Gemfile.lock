@@ -14,7 +14,6 @@ GEM
       net-ssh (~> 2.1.0)
     parser (2.3.1.0)
       ast (~> 2.2)
-    perftools.rb (2.0.4)
     powerpack (0.1.1)
     rainbow (2.1.0)
     rake (11.1.2)
@@ -39,7 +38,6 @@ DEPENDENCIES
   minitest (~> 5.8.4)
   net-ssh
   net-ssh-shell
-  perftools.rb
   rake
   rubocop
   toml-rb
