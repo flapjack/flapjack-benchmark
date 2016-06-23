@@ -1,7 +1,7 @@
 GIT
   remote: git://github.com/tom-tuddenham-bulletproof/flapjack.git
-  revision: deec6dbaa4dc7ab4d1d82a48178d6d9f897ccc00
-  branch: multiple_processor_threads
+  revision: dd487f0348bd12e3c0e9faa1e793dcf7a98570ff
+  branch: remove_statistics
   specs:
     flapjack (2.0.0)
       activesupport
@@ -26,6 +26,14 @@ GIT
       xmpp4r (>= 0.5.5)
       zermelo (= 1.4.3)
 
+GIT
+  remote: git://github.com/tom-tuddenham-bulletproof/zermelo.git
+  revision: ba4b7c90caaf04b4418199e6f846c324218dbf16
+  branch: merge_and_cache
+  specs:
+    zermelo (1.4.3)
+      activemodel
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -42,7 +50,7 @@ GEM
       bundler
       rake
       thor (>= 0.14.0)
-    ast (2.2.0)
+    ast (2.3.0)
     builder (3.2.2)
     chronic (0.10.2)
     chronic_duration (0.10.6)
@@ -76,7 +84,8 @@ GEM
       net-ssh (~> 2.1.0)
     nexmo (2.0.0)
     numerizer (0.1.1)
-    parser (2.3.1.0)
+    oj (2.16.1)
+    parser (2.3.1.2)
       ast (~> 2.2)
     powerpack (0.1.1)
     puma (3.4.0)
@@ -85,7 +94,7 @@ GEM
     rack-protection (1.5.3)
       rack
     rainbow (2.1.0)
-    rake (11.1.2)
+    rake (11.2.2)
     redis (3.3.0)
     rubocop (0.40.0)
       parser (>= 2.3.1.0, < 3.0)
@@ -93,7 +102,7 @@ GEM
       rainbow (>= 1.99.1, < 3.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
-    ruby-progressbar (1.8.0)
+    ruby-progressbar (1.8.1)
     sinatra (1.4.7)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -109,12 +118,10 @@ GEM
       citrus (~> 3.0, > 3.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2016.4)
+    tzinfo-data (1.2016.5)
       tzinfo (>= 1.0.0)
-    unicode-display_width (1.0.5)
+    unicode-display_width (1.1.0)
     xmpp4r (0.5.6)
-    zermelo (1.4.3)
-      activemodel
 
 PLATFORMS
   java
@@ -124,17 +131,17 @@ DEPENDENCIES
   appraisal
   descriptive_statistics (~> 2.4.0)
   flapjack (= 2.0.0)!
-  flapjack-diner (= 2.0.0)
   hiredis (~> 0.6.1)
   minitest (~> 5.8.4)
   net-ssh
   net-ssh-shell
+  oj
   rake
   redis (~> 3.2)
   rubocop
   stackprof
   toml-rb
-  zermelo
+  zermelo!
 
 BUNDLED WITH
    1.12.3

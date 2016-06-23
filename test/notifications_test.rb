@@ -38,6 +38,10 @@ class NotificationsTest < PerformanceTest
 
   end
 
+  # def test_naive_load_1_notifications
+  #   naive_load_notifications(count: 1)
+  # end
+
   def test_naive_load_100_notifications
     naive_load_notifications(count: 100)
   end
@@ -128,9 +132,10 @@ class NotificationsTest < PerformanceTest
     data_load_end = Time.now
     puts "\tData load time: #{data_load_end - data_load_start} seconds"
 
-    Flapjack::Benchmark::TestServer.start
     puts 'PAUSING!'
     sleep(10)
+    Flapjack::Benchmark::TestServer.start
+
     puts "\tFlapjack Server started."
     begin
       processing_start = nil

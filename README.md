@@ -91,6 +91,8 @@ Individual test files can executed as per MiniTest's convention, using the TEST 
 
 `bundle exec appraisal flapjack_1_6 rake test TEST=test/naive_flood_test.rb`
 
+bundle exec appraisal flapjack_2_0 rake test TEST=test/naive_flood_test.rb
+
 ## Profiling Flapjack
 
 The benchmark uses (perftools.rb)[https://github.com/tmm1/perftools.rb] for profiling. Under Ruby 2.x this tool segfaults quite often (known issue) and is not recommended for general use.

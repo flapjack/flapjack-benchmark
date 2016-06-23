@@ -24,7 +24,6 @@ GEM
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
     ruby-progressbar (1.8.1)
-    stackprof (0.2.9)
     thor (0.19.1)
     toml-rb (0.3.14)
       citrus (~> 3.0, > 3.0)
@@ -41,7 +40,6 @@ DEPENDENCIES
   net-ssh-shell
   rake
   rubocop
-  stackprof
   toml-rb
 
 BUNDLED WITH
