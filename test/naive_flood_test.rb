@@ -14,11 +14,11 @@ class NaiveFloodTest < PerformanceTest
   def setup
     @redis = event_queue_redis_connection
     @redis.flushdb
-#    Flapjack::Benchmark::TestServer.start
+    Flapjack::Benchmark::TestServer.start
   end
 
   def teardown
-#    Flapjack::Benchmark::TestServer.stop
+    Flapjack::Benchmark::TestServer.stop
   end
 
   def test_ping_flood_100_per_sec
